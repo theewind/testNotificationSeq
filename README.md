@@ -8,10 +8,15 @@ testNotificationSeq
 
 但是遇到一个问题：如果在某个UILable中sleep(1),比如：1和5，即使2，3，4都没有sleep，也是要等到1和5的sleep都执行后，一起刷新五个lable：
 分析：
+
 1 在主线程post消息，然后五个lable几乎同时（不到一个runloop）收到消息，等待下一runloop时刷新界面，但是因为有sleep，所以主线程被阻塞，需执行完1和5的sleep，才会更新所有的UI。
+
 2 子线程post消息，接收消息收更新UI和sleep都在主线程，则效果同上
+
 3 子线程post消息，1和5的sleep在子线程更新UI在sleep之后，2，3，4更新在主线程，则2，3，4先更新，等待子线程sleep之间到以后，更新UI，如果属于同一个子线程，则sleep时间是两个之和
+
 4 子线程post消息，1和5的sleep在子线程更新UI在sleep之前，2，3，4更新在主线程，则2，3，4先更新，1和5先更新UI，然后sleep，并执行之后的操作。
+
 
 参考网上：http://aartivaz.blogspot.com/2013_01_01_archive.html
 What is notification in iOS?
